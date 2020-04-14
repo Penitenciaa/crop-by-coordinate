@@ -1,0 +1,51 @@
+
+import cv2
+
+def findcoords(rec):
+        if "left_x:" and "top_y:" and "width:" and "height:" in rec:
+            print(rec)
+            title = rec[0: rec.index(":")]
+            leftx = int(rec[rec.index("left_x:") + 7:rec.index("top_y:")].strip())
+            topy = int(rec[rec.index("top_y:") + 6:rec.index("width")].strip())
+            rightx = int(rec[rec.index("width:") + 6:rec.index("height:")].strip()) + int(leftx)
+            bottomy = int(rec[rec.index("height:") + 7:rec.index(")")].strip()) + int(topy)
+            print(title, leftx, topy, rightx, bottomy)
+                
+            d = dict()
+            d['title'] = title
+            d['leftx'] = leftx
+            d['topy'] = topy
+            d['rightx'] = rightx
+            d['bottomy'] = bottomy
+                
+            return d
+                
+            
+
+        
+def printImage(d):
+    title = d['title']
+    leftx = d['leftx']
+    topy = d['topy']
+    rightx = d['rightx']
+    bottomy = d['bottomy']
+    path = "Resources/detection1.jpg"
+    img = cv2.imread(path)
+    imgCropped = img[topy:bottomy, leftx:rightx]
+
+
+    cv2.imshow(title, imgCropped)
+
+
+def main():
+    with open("Resources/result.txt") as fo:
+        for rec in fo:
+            if "left_x:" and "top_y:" and "width:" and "height:" in rec:
+                printImage(findcoords(rec))
+        cv2.waitKey(0)
+
+
+if __name__ == "__main__" :
+    main()
+
+    
